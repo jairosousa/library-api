@@ -1,5 +1,6 @@
 package com.jns.libraryapi.api.service.impl;
 
+import com.jns.libraryapi.api.exception.BussinessException;
 import com.jns.libraryapi.api.model.entity.Book;
 import com.jns.libraryapi.api.model.repository.BookRepository;
 import com.jns.libraryapi.api.service.BookService;
@@ -16,6 +17,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book save(Book book) {
+        if (repository.existsByIsbn(book.getIsbn())){
+            throw new BussinessException("Isbn já cadastrado");
+        }
         return repository.save(book);
     }
 }
