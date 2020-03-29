@@ -2,6 +2,7 @@ package com.jns.libraryapi.api.resource;
 
 import com.jns.libraryapi.api.dto.BookDTO;
 import com.jns.libraryapi.api.exception.ApiErros;
+import com.jns.libraryapi.api.exception.BussinessException;
 import com.jns.libraryapi.api.model.entity.Book;
 import com.jns.libraryapi.api.service.BookService;
 import org.modelmapper.ModelMapper;
@@ -40,5 +41,11 @@ public class BookController {
     public ApiErros handleValidationException(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
         return new ApiErros(bindingResult);
+    }
+
+    @ExceptionHandler(BussinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErros handleBussinessException(BussinessException ex) {
+        return new ApiErros(ex);
     }
 }
