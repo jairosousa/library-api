@@ -87,6 +87,8 @@ public class BookControllerTest {
     @Test
     @DisplayName("Deve obter informações de um livro")
     public void getBookDetailsTest() throws Exception {
+
+        // Cenário
         Long id = 1L;
 
         Book book = Book.builder().id(id)
@@ -111,6 +113,24 @@ public class BookControllerTest {
                 .andExpect(jsonPath("author").value(createNewBook().getAuthor()))
                 .andExpect(jsonPath("isbn").value(createNewBook().getIsbn()));
 
+
+    }
+
+    @Test
+    @DisplayName("Deve retornar not found quando o livro não existir")
+    public void bookNotFoundException() throws Exception {
+
+        //Caenário
+        BDDMockito.given(service.getById(Mockito.anyLong())).willReturn(Optional.empty());
+
+        // Execução (when)
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(BOOK_API.concat("/" + 1))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isNotFound());
 
     }
 
