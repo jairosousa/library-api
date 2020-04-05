@@ -26,6 +26,12 @@ public class BookController {
         this.modelMapper = modelMapper;
     }
 
+    @GetMapping("{id}")
+    public BookDTO get(@PathVariable long id) {
+        Book book = service.getById(id).get();
+        return modelMapper.map(book, BookDTO.class);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookDTO create(@RequestBody @Valid BookDTO dto) {
