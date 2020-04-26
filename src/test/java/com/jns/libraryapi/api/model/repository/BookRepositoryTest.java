@@ -10,8 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -29,7 +30,7 @@ public class BookRepositoryTest {
     public void returnTrueWhenIsbnExists() {
         // Cenário
         String isbn = "123";
-        Book book = Book.builder().title("Aventuras").author("Fulano").isbn(isbn).build();
+        Book book = createNewBook(isbn);
         entityManager.persist(book);
 
         // Execução
@@ -38,6 +39,7 @@ public class BookRepositoryTest {
         // Verificação
         assertThat(exists).isTrue();
     }
+
 
     @Test
     @DisplayName("Deve retornar falso quando não existir um livro com Isbn informado")
@@ -50,5 +52,54 @@ public class BookRepositoryTest {
 
         // Verificação
         assertThat(exists).isFalse();
+    }
+
+    @Test
+    @DisplayName("Deve obter um livro ")
+    public void findById() {
+        // Cenário
+        String isbn = "123";
+        Book book = createNewBook(isbn);
+        entityManager.persist(book);
+
+        // Execução
+        Optional<Book> foubdBook = repository.findById(book.getId());
+
+        // Verificação
+        assertThat(foubdBook.isPresent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Deve salvar um livro")
+    public void save() {
+
+        // Cenário
+        Book book = createNewBook("123");
+
+        Book saveBook = repository.save(book);
+
+        assertThat(saveBook.getId()).isNotNull();
+
+    }
+
+    @Test
+    @DisplayName("Deve deletar um livro")
+    public void delete() {
+
+        // Cenário
+        Book book = createNewBook("123");
+        book = entityManager.persist(book);
+
+        repository.delete(book);
+
+        Optional<Book> foubdBook = repository.findById(book.getId());
+
+        assertThat(foubdBook.isPresent()).isFalse();
+    }
+
+
+
+    private Book createNewBook(String isbn) {
+        return Book.builder().title("Aventuras").author("Fulano").isbn(isbn).build();
     }
 }
