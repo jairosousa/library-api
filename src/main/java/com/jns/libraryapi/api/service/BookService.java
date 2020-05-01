@@ -17,4 +17,6 @@ public interface BookService {
     Book update(Book book) throws IllegalAccessException;
 
     Page<Book> find(Book filter, Pageable pageable);
+
+    Optional<Book> getBookByIsbn(String isbn);
 }

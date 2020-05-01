@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@WebMvcTest
+@WebMvcTest(controllers = BookController.class)
 @AutoConfigureMockMvc
 public class BookControllerTest {
 
@@ -246,7 +246,7 @@ public class BookControllerTest {
     }
 
     @Test
-    @DisplayName("Deve filtar livros")
+    @DisplayName("Deve filtrar livros")
     public void findBookTest() throws Exception {
         Long id = 1l;
 
