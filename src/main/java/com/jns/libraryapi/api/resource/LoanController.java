@@ -1,6 +1,7 @@
 package com.jns.libraryapi.api.resource;
 
 import com.jns.libraryapi.api.dto.LoanDTO;
+import com.jns.libraryapi.api.dto.ReturnedLoadDTO;
 import com.jns.libraryapi.api.model.entity.Book;
 import com.jns.libraryapi.api.model.entity.Loan;
 import com.jns.libraryapi.api.service.BookService;
@@ -30,10 +31,21 @@ public class LoanController {
         Loan entity = Loan.builder()
                 .book(book)
                 .custumer(loanDTO.getCustumer())
-                .loaanDate(LocalDate.now())
+                .loanDate(LocalDate.now())
                 .build();
         entity = loanService.save(entity);
 
         return entity.getId();
+    }
+
+    @PatchMapping("{id}")
+    public void  returnBook(@PathVariable Long id, @RequestBody ReturnedLoadDTO dto) {
+
+        Loan loan = loanService.getById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        loan.setReturned(dto.isReturned());
+
+        loanService.update(loan);
     }
 }

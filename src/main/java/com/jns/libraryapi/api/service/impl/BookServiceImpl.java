@@ -3,6 +3,7 @@ package com.jns.libraryapi.api.service.impl;
 import com.jns.libraryapi.api.exception.BussinessException;
 import com.jns.libraryapi.api.model.entity.Book;
 import com.jns.libraryapi.api.model.repository.BookRepository;
+import com.jns.libraryapi.api.model.repository.LoanRepository;
 import com.jns.libraryapi.api.service.BookService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -65,6 +66,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Optional<Book> getBookByIsbn(String isbn) {
-        return Optional.empty();
+        return repository.findByIsbn(isbn);
     }
 }
