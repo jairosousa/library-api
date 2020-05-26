@@ -4,9 +4,11 @@ import com.jns.libraryapi.api.exception.BussinessException;
 import com.jns.libraryapi.api.model.entity.Loan;
 import com.jns.libraryapi.api.model.repository.LoanRepository;
 import com.jns.libraryapi.api.service.LoanService;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class LoanServiceImpl implements LoanService {
 
     private final LoanRepository repository;
@@ -29,7 +31,7 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public Long update(Loan loan) {
-        return null;
+    public Loan update(Loan loan) {
+        return repository.save(loan);
     }
 }

@@ -9,5 +9,5 @@ public interface LoanService {
 
     Optional<Loan> getById(Long id);
 
-    Long update(Loan loan);
+    Loan update(Loan loan);
 }
