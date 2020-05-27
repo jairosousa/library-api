@@ -246,7 +246,7 @@ public class BookControllerTest {
     }
 
     @Test
-@DisplayName("Deve filtrar           livros")
+    @DisplayName("Deve filtrar livros")
     public void findBookTest() throws Exception {
         Long id = 1l;
 
@@ -262,7 +262,7 @@ public class BookControllerTest {
         BDDMockito.given(service.find(Mockito.any(Book.class), Mockito.any(Pageable.class)))
                 .willReturn(page);
 
-        String queryString = String.format("?title=%s&author=&s&page=0&size=100", book.getTitle(), book.getAuthor());
+        String queryString = String.format("?title=%s&author=%s&page=0&size=100", book.getTitle(), book.getAuthor());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(BOOK_API.concat(queryString))

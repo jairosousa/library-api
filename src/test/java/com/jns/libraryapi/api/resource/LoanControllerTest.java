@@ -3,12 +3,15 @@ package com.jns.libraryapi.api.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jns.libraryapi.api.dto.LoanDTO;
+import com.jns.libraryapi.api.dto.LoanFilterDTO;
 import com.jns.libraryapi.api.dto.ReturnedLoadDTO;
 import com.jns.libraryapi.api.exception.BussinessException;
 import com.jns.libraryapi.api.model.entity.Book;
 import com.jns.libraryapi.api.model.entity.Loan;
+import com.jns.libraryapi.api.model.entity.Loan;
 import com.jns.libraryapi.api.service.BookService;
 import com.jns.libraryapi.api.service.LoanService;
+import com.jns.libraryapi.api.service.LoanServiceTest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -27,8 +33,10 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -97,8 +105,6 @@ public class LoanControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors", Matchers.hasSize(1)))
                 .andExpect(jsonPath("errors[0]").value("Book not found for passed isbn"));
-
-
 
     }
 
@@ -173,6 +179,39 @@ public class LoanControllerTest {
         ).andExpect(status().isNotFound());
 
         Mockito.verify(loanService, Mockito.never()).update(Mockito.any(Loan.class));
+    }
+
+    @Test
+    @DisplayName("Deve filtrar emprestimos")
+    public void findLoanTest() throws Exception {
+
+        // Cenário
+        Long id = 1l;
+
+        Loan loan = LoanServiceTest.createLoan();
+        loan.setId(id);
+        Book book = Book.builder().id(1l).isbn("321").build();
+        loan.setBook(book);
+
+        PageImpl<Loan> page = new PageImpl<Loan>(Arrays.asList(loan), PageRequest.of(0, 100), 1);
+
+        BDDMockito.given(loanService.find(Mockito.any(LoanFilterDTO.class), Mockito.any(Pageable.class)))
+                .willReturn(page);
+
+        String queryString = String.format("?isbn=%s&custumer=%s&page=0&size=10", book.getIsbn(), loan.getCustumer());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(LOAN_API.concat(queryString))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("content", hasSize(1)))
+                .andExpect(jsonPath("totalElements").value(1))
+                .andExpect(jsonPath("pageable.pageSize").value(10))
+                .andExpect(jsonPath("pageable.pageNumber").value(0));
+
     }
 
 }
