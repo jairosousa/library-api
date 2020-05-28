@@ -20,9 +20,4 @@ public class LibraryApiApplication {
         SpringApplication.run(LibraryApiApplication.class, args);
     }
 
-    @Scheduled(cron = "0 10 12 1/1 * ?")
-    public void testeAgendamentoService() {
-        System.out.println("AGENDAMEMTO DE TAREFAS");
-    }
-
 }
