@@ -2,6 +2,7 @@ package com.jns.libraryapi.api.service.impl;
 
 import com.jns.libraryapi.api.dto.LoanFilterDTO;
 import com.jns.libraryapi.api.exception.BussinessException;
+import com.jns.libraryapi.api.model.entity.Book;
 import com.jns.libraryapi.api.model.entity.Loan;
 import com.jns.libraryapi.api.model.repository.LoanRepository;
 import com.jns.libraryapi.api.service.LoanService;
@@ -41,5 +42,10 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public Page<Loan> find(LoanFilterDTO filterDTO, Pageable pageable) {
         return repository.findByBookIsbnOrCustomer(filterDTO.getIsbn(), filterDTO.getCustumer(), pageable);
+    }
+
+    @Override
+    public Page<Loan> getLoansByBook(Book book, Pageable pageable) {
+        return repository.findByBook(book, pageable);
     }
 }
