@@ -6,6 +6,10 @@ import com.jns.libraryapi.api.model.entity.Book;
 import com.jns.libraryapi.api.model.entity.Loan;
 import com.jns.libraryapi.api.service.BookService;
 import com.jns.libraryapi.api.service.LoanService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -19,6 +23,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api("Book API")
 @RestController
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
@@ -30,6 +35,8 @@ public class BookController {
 
     private final LoanService loanService;
 
+
+    @ApiOperation("Find a Book By ID")
     @GetMapping("{id}")
     public BookDTO get(@PathVariable long id) {
         return service.getById(id)
@@ -37,6 +44,10 @@ public class BookController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Book succesfully deleted")
+    })
+    @ApiOperation("Delete a Book By ID")
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) throws Exception {
@@ -47,6 +58,7 @@ public class BookController {
 
     }
 
+    @ApiOperation("Create a Book")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookDTO create(@RequestBody @Valid BookDTO dto) {
@@ -75,6 +87,7 @@ public class BookController {
 
     }
 
+    @ApiOperation("Find a Book By Params")
     @GetMapping
     public Page<BookDTO> find(BookDTO dto, Pageable pageable) {
         Book filter = modelMapper.map(dto, Book.class);
