@@ -62,7 +62,7 @@ public class LoanControllerTest {
     public void createLoanTest() throws Exception {
 
         // Cenário
-        LoanDTO dto = LoanDTO.builder().isbn("123").custumer("Fulano").build();
+        LoanDTO dto = LoanDTO.builder().isbn("123").email("custumer@email.com").custumer("Fulano").build();
         String json = new ObjectMapper().writeValueAsString(dto);
 
         BDDMockito.given(bookService.getBookByIsbn("123"))
